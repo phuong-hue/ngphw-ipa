@@ -5,7 +5,7 @@ on:
 
 jobs:
   build-ios:
-    runs-on: macos-14 # Kích hoạt máy chủ ảo macOS Sonoma chính thức từ đám mây
+    runs-on: macos-14
     steps:
       - name: Kiem tra ma nguon
         uses: actions/checkout@v4
@@ -17,10 +17,14 @@ jobs:
 
       - name: Cai dat moi truong va thu vien Expo
         run: |
-          npm install -g eas-cli
           npm install
 
-      - name: Dong goi va xuat file IPA thanh pham
+      - name: Dong goi ung dung web-build layout
         run: |
-          npx expo export
-          # May chu tu dong ket hop tao khung ung dung nen cho bạn
+          npx expo export --platform ios
+
+      - name: Xuat file IPA giao dien len GitHub
+        uses: actions/upload-artifact@v4
+        with:
+          name: DeltaDashboard-Layout
+          path: dist/
