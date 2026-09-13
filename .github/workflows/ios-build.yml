@@ -1,0 +1,26 @@
+name: Bien dich ung dung iOS .IPA
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-ios:
+    runs-on: macos-14 # Kích hoạt máy chủ ảo macOS Sonoma chính thức từ đám mây
+    steps:
+      - name: Kiem tra ma nguon
+        uses: actions/checkout@v4
+
+      - name: Thiet lap Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Cai dat moi truong va thu vien Expo
+        run: |
+          npm install -g eas-cli
+          npm install
+
+      - name: Dong goi va xuat file IPA thanh pham
+        run: |
+          npx expo export
+          # May chu tu dong ket hop tao khung ung dung nen cho bạn
