@@ -1,30 +1,34 @@
-name: Bien dich ung dung iOS .IPA
-on:
-  push:
-    branches: [ main ]
+name: Build iOS App
+
+on: [push, workflow_dispatch]
 
 jobs:
-  build-ios:
-    runs-on: macos-14
+  build:
+    runs-on: macos-latest
     steps:
-      - name: Kiem tra ma nguon
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Thiet lap Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Cai dat moi truong va thu vien Expo
+      - name: Build .app and .ipa
         run: |
-          npm install
+          cd 3105-main
+          xcodebuild build \
+            -project ThreeOneOSFive.xcodeproj \
+            -scheme ThreeOneOSFive \
+            -configuration Release \
+            -sdk iphoneos \
+            -derivedDataPath ./build_output \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO
+          
+          # Đóng gói luôn thành file .ipa
+          mkdir -p Payload
+          cp -r ./build_output/Build/Products/Release-iphoneos/*.app Payload/
+          zip -r Delta_3105.ipa Payload
 
-      - name: Dong goi ung dung web-build layout
-        run: |
-          npx expo export --platform ios
-
-      - name: Xuat file IPA giao dien len GitHub
+      - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: DeltaDashboard-Layout
-          path: dist/
+          name: Delta_3105_IPA
+          path: 3105-main/Delta_3105.ipa
